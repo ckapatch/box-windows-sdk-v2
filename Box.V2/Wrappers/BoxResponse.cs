@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 namespace Box.V2
 {
     /// <summary>
@@ -28,6 +29,11 @@ namespace Box.V2
         public int StatusCode { get; set; }
 
         /// <summary>
+        /// Headers From Response
+        /// </summary>
+        public List<KeyValuePair<string, IEnumerable<string>>> Headers { get; set; }
+
+        /// <summary>
         /// The error associated with an Error status
         /// This will be null in all other cases
         /// </summary>
@@ -43,6 +49,7 @@ namespace Box.V2
         Success,
         Pending,
         Error,
-        Unauthorized
+        Unauthorized,
+        RateLimitReached
     }
 }

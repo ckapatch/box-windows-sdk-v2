@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -48,9 +49,18 @@ namespace Box.V2.Request
             {
                 HttpResponseMessage response = await _client.SendAsync(httpRequest, completionOption).ConfigureAwait(false);
 
-                BoxResponse<T> boxResponse = new BoxResponse<T>();
+                BoxResponse<T> boxResponse = new BoxResponse<T>()
+                {
+                    Headers = new List<KeyValuePair<string, IEnumerable<string>>>()
+                };
 
-                // Translate the status codes that interest us 
+                foreach (var header in response.Headers)
+                {                    
+                    boxResponse.Headers.Add(new KeyValuePair<string, IEnumerable<string>>(header.Key, header.Value));
+                }                
+
+                // Translate the status codes that interest us     
+                boxResponse.StatusCode = (int)response.StatusCode;
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.OK:
@@ -63,9 +73,17 @@ namespace Box.V2.Request
                         break;
                     case HttpStatusCode.Unauthorized:
                         boxResponse.Status = ResponseStatus.Unauthorized;
-                        break;
+                        break;                   
                     default:
-                        boxResponse.Status = ResponseStatus.Error;
+                        if (boxResponse.StatusCode == 429)
+                        {
+                            boxResponse.Status = ResponseStatus.RateLimitReached;
+                        }
+                        else
+                        {
+                            boxResponse.Status = ResponseStatus.Error;
+                        }
+
                         break;
                 }
 

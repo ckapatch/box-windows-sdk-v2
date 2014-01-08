@@ -1,6 +1,7 @@
 ﻿using Box.V2.Converter;
 using Box.V2.Exceptions;
 using Box.V2.Services;
+using System.Linq;
 
 namespace Box.V2
 {
@@ -25,7 +26,22 @@ namespace Box.V2
                     if (!string.IsNullOrWhiteSpace(response.ContentString))
                         response.ResponseObject = converter.Parse<T>(response.ContentString);
                     break;
-                case ResponseStatus.Error:
+                case ResponseStatus.RateLimitReached:
+                    if (!string.IsNullOrWhiteSpace(response.ContentString))
+                    {
+                        int retryAfter = int.Parse(response.Headers
+                            .Where(x => x.Key == "retryAfter")
+                            .SelectMany(x => x.Value)
+                            .First());                            
+
+                        response.Error = converter.Parse<BoxError>(response.ContentString);
+                        if (response.Error != null && !string.IsNullOrWhiteSpace(response.Error.Name))
+                            throw new BoxRateLimitingException(string.Format("{0}: {1}", response.Error.Name, response.Error.Description), retryAfter);
+                        throw new BoxRateLimitingException(response.ContentString, retryAfter);
+                    }
+                    break;
+
+                case ResponseStatus.Error:                                     
                     if (!string.IsNullOrWhiteSpace(response.ContentString))
                     {
                         response.Error = converter.Parse<BoxError>(response.ContentString);

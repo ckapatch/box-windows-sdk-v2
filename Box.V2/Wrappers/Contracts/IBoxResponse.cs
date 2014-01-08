@@ -1,6 +1,7 @@
-﻿
-namespace Box.V2
+﻿namespace Box.V2
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Interface for all Box responses
     /// </summary>
@@ -21,6 +22,11 @@ namespace Box.V2
         /// Status of the response
         /// </summary>
         ResponseStatus Status { get; set; }
+
+        /// <summary>
+        /// Headers From Response
+        /// </summary>
+        List<KeyValuePair<string, IEnumerable<string>>> Headers { get; set; }
 
         /// <summary>
         /// The error associated with an Error status
