@@ -40,7 +40,13 @@ namespace Box.V2
                         throw new BoxRateLimitingException(response.ContentString, retryAfter);
                     }
                     break;
-
+                case ResponseStatus.Unauthorized:
+                    {
+                        response.Error = converter.Parse<BoxError>(response.ContentString);
+                        if (response.Error != null && !string.IsNullOrWhiteSpace(response.Error.Name))
+                            throw new AccessTokenExpiredException(string.Format("{0}: {1}", response.Error.Name, response.Error.Description));
+                        throw new AccessTokenExpiredException(response.ContentString);
+                    }
                 case ResponseStatus.Error:                                     
                     if (!string.IsNullOrWhiteSpace(response.ContentString))
                     {

@@ -22,6 +22,7 @@ namespace Box.V2.Request
         {
             _handler = new HttpClientHandler();
             _client = new HttpClient(_handler);
+            _client.Timeout = TimeSpan.FromMinutes(20);
         }
 
         public async Task<IBoxResponse<T>> ExecuteAsync<T>(IBoxRequest request)
