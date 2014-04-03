@@ -14,13 +14,13 @@ namespace Box.V2.Exceptions
         /// Instantiates a new BoxException with the provided message
         /// </summary>
         /// <param name="message">The message for the exception</param>
-        public BoxRateLimitingException(string message, int retryAfter) : base(message) { }
+        public BoxRateLimitingException(string message, int retryAfter) : base(message) { this.RetryAfter = retryAfter; }
 
         /// <summary>
         /// Instantiates a new BoxException with the provided message and provided inner Exception
         /// </summary>
         /// <param name="message">The exception message</param>
         /// <param name="innerException">The inner exception to be wrapped</param>
-        public BoxRateLimitingException(string message, int retryAfter, Exception innerException) : base(message, innerException) { }
+        public BoxRateLimitingException(string message, int retryAfter, Exception innerException) : base(message, innerException) { this.RetryAfter = retryAfter; }
     }
 }

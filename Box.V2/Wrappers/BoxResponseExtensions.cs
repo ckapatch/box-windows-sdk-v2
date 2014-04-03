@@ -30,9 +30,9 @@ namespace Box.V2
                     if (!string.IsNullOrWhiteSpace(response.ContentString))
                     {
                         int retryAfter = int.Parse(response.Headers
-                            .Where(x => x.Key == "retryAfter")
+                            .Where(x => x.Key == "Retry-After")
                             .SelectMany(x => x.Value)
-                            .First());                            
+                            .FirstOrDefault() ?? "20");
 
                         response.Error = converter.Parse<BoxError>(response.ContentString);
                         if (response.Error != null && !string.IsNullOrWhiteSpace(response.Error.Name))
