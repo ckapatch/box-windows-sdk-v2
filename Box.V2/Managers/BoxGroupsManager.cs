@@ -34,6 +34,9 @@ namespace Box.V2.Managers
         /// <param name="limit">The number of results to return with this request. Refer to the Box API for defaults.</param>
         /// <param name="offset">The offset of the results. Refer to the Box API for more details.</param>
         /// <param name="fields">The fields to return for this request.</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns>A collection of groups</returns>
         public async Task<BoxCollection<BoxGroup>> GetAllGroupsAsync(int? limit = null, int? offset = null, List<string> fields = null)
         {
@@ -52,6 +55,9 @@ namespace Box.V2.Managers
         /// </summary>
         /// <param name="id">The id of the group to return</param>
         /// <param name="fields">The fields to return for this request.</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns>Group with id='id'</returns>
         public async Task<BoxGroup> GetGroupAsync(string id, List<string> fields = null)
         {
@@ -70,6 +76,9 @@ namespace Box.V2.Managers
         /// </summary>
         /// <param name="groupRequest">The request that contains the name of the group to create</param>
         /// <param name="fields">Optional fields to return</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns>The newly created group</returns>
         public async Task<BoxGroup> CreateAsync(BoxGroupRequest groupRequest, List<string> fields = null)
         {
@@ -90,6 +99,9 @@ namespace Box.V2.Managers
         /// Delete an existing group
         /// </summary>
         /// <param name="id">The id of the group to delete</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns>True if delete was successful</returns>
         public async Task<bool> DeleteAsync(string id)
         {
@@ -109,6 +121,9 @@ namespace Box.V2.Managers
         /// <param name="id">Id of the group to update</param>
         /// <param name="groupRequest">Request containing the update, e.g. updated name</param>
         /// <param name="fields">Optional fields to return</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns>The updated group</returns>
         public async Task<BoxGroup> UpdateAsync(string id, BoxGroupRequest groupRequest, List<string> fields = null)
         {
@@ -130,6 +145,9 @@ namespace Box.V2.Managers
         /// </summary>
         /// <param name="membershipRequest">The request object that contains the user Id and group Id</param>
         /// <param name="fields">Optional fields to return</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns>The group membership created</returns>
         public async Task<BoxGroupMembership> AddMemberToGroupAsync(BoxGroupMembershipRequest membershipRequest, List<string> fields = null) 
         {
@@ -151,6 +169,9 @@ namespace Box.V2.Managers
         /// Delete a group membership
         /// </summary>
         /// <param name="id">The id of the groupmembership to delete</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns>True if delete was successful</returns>
         public async Task<bool> DeleteGroupMembershipAsync(string id)
         {
@@ -171,6 +192,9 @@ namespace Box.V2.Managers
         /// <param name="limit">The number of results to return with this request. Refer to the Box API for defaults.</param>
         /// <param name="offset">The offset of the results. Refer to the Box API for more details.</param>
         /// <param name="fields">The fields to return for this request.</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns>A collection of group memberships for the specified group id</returns>
         public async Task<BoxCollection<BoxGroupMembership>> GetAllGroupMembershipsForGroupAsync(string groupId, int? limit = null, int? offset = null, List<string> fields = null)
         {
@@ -193,6 +217,9 @@ namespace Box.V2.Managers
         /// <param name="limit">The number of results to return with this request. Refer to the Box API for defaults.</param>
         /// <param name="offset">The offset of the results. Refer to the Box API for more details.</param>
         /// <param name="fields">The optional fields to return for this request.</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                  
         /// <returns>A collection of group memberships for the specified user id</returns>
         public async Task<BoxCollection<BoxGroupMembership>> GetAllGroupMembershipsForUserAsync(string userId, int? limit = null, int? offset = null, List<string> fields = null)
         {
@@ -213,6 +240,9 @@ namespace Box.V2.Managers
         /// </summary>
         /// <param name="id">The id of the group membership to return.</param>
         /// <param name="fields">The fields to return for this request.</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                  
         /// <returns>Group membership with id='id'</returns>
         public async Task<BoxGroupMembership> GetGroupMembershipAsync(string id, List<string> fields = null)
         {
@@ -232,6 +262,9 @@ namespace Box.V2.Managers
         /// <param name="membershipId">It of the group membership to update</param>
         /// <param name="memRequest">The request specifying the update</param>
         /// <param name="fields">Optional fields to return</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                  
         /// <returns>The updated group membership</returns>
         public async Task<BoxGroupMembership> UpdateGroupMembershipAsync(string membershipId, BoxGroupMembershipRequest memRequest, List<string> fields = null) 
         {

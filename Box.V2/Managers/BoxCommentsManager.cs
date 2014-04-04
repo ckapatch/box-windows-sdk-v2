@@ -21,6 +21,9 @@ namespace Box.V2.Managers
         /// Used to add a comment by the user to a specific file, discussion, or comment (i.e. as a reply comment).
         /// </summary>
         /// <param name="commentRequest"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns></returns>
         public async Task<BoxComment> AddCommentAsync(BoxCommentRequest commentRequest, List<string> fields = null)
         {
@@ -44,6 +47,9 @@ namespace Box.V2.Managers
         /// A full comment object is returned is the ID is valid and if the user has access to the comment.
         /// </summary>
         /// <param name="commentRequest"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns></returns>
         public async Task<BoxComment> GetInformationAsync(string id, List<string> fields = null)
         {
@@ -61,6 +67,9 @@ namespace Box.V2.Managers
         /// Used to update the message of the comment.
         /// </summary>
         /// <param name="id"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns></returns>
         public async Task<BoxComment> UpdateAsync(string id, BoxCommentRequest commentsRequest, List<string> fields = null)
         {
@@ -83,6 +92,9 @@ namespace Box.V2.Managers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="commentsRequest"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns></returns>
         public async Task<bool> DeleteAsync(string id)
         {

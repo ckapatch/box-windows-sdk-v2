@@ -24,6 +24,9 @@ namespace Box.V2.Managers
         /// Either an email address or a user ID can be used to create the collaboration.
         /// </summary>
         /// <param name="collaborationRequest"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns></returns>
         public async Task<BoxCollaboration> AddCollaborationAsync(BoxCollaborationRequest collaborationRequest, List<string> fields = null)
         {
@@ -47,6 +50,9 @@ namespace Box.V2.Managers
         /// <see cref="https://support.box.com/entries/20366031-what-are-the-different-collaboration-permissions-and-what-access-do-they-provide"/>
         /// </summary>
         /// <param name="collaborationRequest"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                  
         /// <returns></returns>
         public async Task<BoxCollaboration> EditCollaborationAsync(BoxCollaborationRequest collaborationRequest, List<string> fields = null)
         {
@@ -67,6 +73,9 @@ namespace Box.V2.Managers
         /// Used to delete a single collaboration.
         /// </summary>
         /// <param name="id"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                  
         /// <returns></returns>
         public async Task<bool> RemoveCollaborationAsync(string id)
         {
@@ -85,6 +94,9 @@ namespace Box.V2.Managers
         /// <see cref="http://developers.box.com/docs/#collaborations-get-pending-collaborations"/>
         /// </summary>
         /// <param name="collaborationRequest"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                       
         /// <returns></returns>
         public async Task<BoxCollaboration> GetCollaborationAsync(string id, List<string> fields = null)
         {

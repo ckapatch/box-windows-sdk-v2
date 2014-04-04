@@ -42,6 +42,9 @@ namespace Box.V2.Managers
         /// <param name="id"></param>
         /// <param name="limit"></param>
         /// <param name="offset"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                  
         public async Task<BoxCollection<BoxItem>> GetFolderItemsAsync(string id, int limit, int offset = 0, List<string> fields = null)
         {
             id.ThrowIfNullOrWhiteSpace("id");
@@ -60,6 +63,9 @@ namespace Box.V2.Managers
         /// Used to create a new empty folder. The new folder will be created inside of the specified parent folder
         /// </summary>
         /// <param name="folder"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns></returns>
         public async Task<BoxFolder> CreateAsync(BoxFolderRequest folderRequest, List<string> fields = null)
         {
@@ -84,6 +90,9 @@ namespace Box.V2.Managers
         /// as well as the files and folders contained in it. The root folder of a Box account is always 
         /// represented by the id “0″.
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                  
         /// <returns></returns>
         public async Task<BoxFolder> GetInformationAsync(string id, List<string> fields = null)
         {
@@ -103,6 +112,9 @@ namespace Box.V2.Managers
         /// <summary>
         /// Used to create a copy of a folder in another folder. The original version of the folder will not be altered.
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                  
         /// <returns></returns>
         public async Task<BoxFolder> CopyAsync(BoxFolderRequest folderRequest, List<string> fields = null)
         {
@@ -126,6 +138,9 @@ namespace Box.V2.Managers
         /// inside of them. An optional If-Match header can be included to ensure that client only deletes the folder 
         /// if it knows about the latest version.
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns></returns>
         public async Task<bool> DeleteAsync(string id, bool recursive = false)
         {
@@ -146,6 +161,9 @@ namespace Box.V2.Managers
         /// An optional If-Match header can be included to ensure that client only updates the folder if it knows 
         /// about the latest version.
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns></returns>
         public async Task<BoxFolder> UpdateInformationAsync(BoxFolderRequest folderRequest, List<string> fields = null)
         {
@@ -167,6 +185,9 @@ namespace Box.V2.Managers
         /// permissions available for shared links. In order to disable a shared link, send this same type of PUT 
         /// request with the value of shared_link set to null, i.e. {"shared_link": null}
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                  
         /// <returns></returns>
         public async Task<BoxFolder> CreateSharedLinkAsync(string id, BoxSharedLinkRequest sharedLinkRequest, List<string> fields = null)
         {
@@ -187,6 +208,9 @@ namespace Box.V2.Managers
         /// <summary>
         /// Use this to get a list of all the collaborations on a folder i.e. all of the users that have access to that folder.
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns></returns>
         public async Task<BoxCollection<BoxCollaboration>> GetCollaborationsAsync(string id, List<string> fields = null)
         {
@@ -208,6 +232,9 @@ namespace Box.V2.Managers
         /// attributes can be passed in separated by commas e.g. fields=name,created_at. Paginated results can be 
         /// retrieved using the limit and offset parameters.
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns></returns>
         public async Task<BoxCollection<BoxItem>> GetTrashItemsAsync(string id, int limit, int offset = 0, List<string> fields = null)
         {
@@ -229,6 +256,9 @@ namespace Box.V2.Managers
         /// before it was moved to the trash. If that parent folder no longer exists or if there is now an item with the same 
         /// name in that parent folder, the new parent folder and/or new name will need to be included in the request.
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                  
         /// <returns></returns>
         public async Task<BoxFolder> RestoreTrashedFolderAsync(BoxFolderRequest folderRequest, List<string> fields = null)
         {
@@ -251,6 +281,9 @@ namespace Box.V2.Managers
         /// <summary>
         /// Permanently deletes an item that is in the trash. The item will no longer exist in Box. This action cannot be undone.
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                  
         /// <returns></returns>
         public async Task<bool> PurgeTrashedFolderAsync(string id)
         {
@@ -268,6 +301,9 @@ namespace Box.V2.Managers
         /// <summary>
         /// Retrieves a folder that has been moved to the trash.
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns></returns>
         public async Task<BoxFolder> GetTrashedFolderAsync(string id, List<string> fields = null)
         {

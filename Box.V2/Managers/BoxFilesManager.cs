@@ -31,6 +31,9 @@ namespace Box.V2.Managers
         /// <param name="id">Id of file information to retrieve</param>
         /// <param name="limit">The number of items to return (default=100, max=1000)</param>
         /// <param name="offset">The item at which to begin the response (default=0)</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>         
         /// <returns></returns>
         public async Task<BoxFile> GetInformationAsync(string id, List<string> fields = null)
         {
@@ -49,6 +52,9 @@ namespace Box.V2.Managers
         /// Returns the stream of the requested file
         /// </summary>
         /// <param name="id">Id of the file to download</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>         
         /// <returns>MemoryStream of the requested file</returns>
         public async Task<Stream> DownloadStreamAsync(string id, string versionId = null)
         {
@@ -68,6 +74,9 @@ namespace Box.V2.Managers
         /// </summary>
         /// <param name="fileRequest"></param>
         /// <param name="stream"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns></returns>
         public async Task<BoxFile> UploadAsync(BoxFileRequest fileRequest, Stream stream, List<string> fields = null)
         {
@@ -105,6 +114,9 @@ namespace Box.V2.Managers
         /// <param name="fileName"></param>
         /// <param name="stream"></param>
         /// <param name="etag"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>         
         /// <returns></returns>
         public async Task<BoxFile> UploadNewVersionAsync(string fileName, string fileId, Stream stream, string etag = null, List<string> fields = null)
         {
@@ -132,6 +144,9 @@ namespace Box.V2.Managers
         /// <remarks>Versions are only tracked for Box users with premium accounts.</remarks>
         /// </summary>
         /// <param name="id"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                         
         /// <returns></returns>
         public async Task<BoxCollection<BoxFileVersion>> ViewVersionsAsync(string id, List<string> fields = null)
         {
@@ -151,6 +166,9 @@ namespace Box.V2.Managers
         /// can be included to ensure that client only updates the file if it knows about the latest version.
         /// </summary>
         /// <param name="fileRequest"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                         
         /// <returns></returns>
         public async Task<BoxFile> UpdateInformationAsync(BoxFileRequest fileRequest, string etag = null, List<string> fields = null)
         {
@@ -175,6 +193,9 @@ namespace Box.V2.Managers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="etag"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns></returns>
         public async Task<bool> DeleteAsync(string id, string etag=null)
         {
@@ -193,6 +214,9 @@ namespace Box.V2.Managers
         /// Used to create a copy of a file in another folder. The original version of the file will not be altered.
         /// </summary>
         /// <param name="fileRequest"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns></returns>
         public async Task<BoxFile> CopyAsync(BoxFileRequest fileRequest, List<string> fields = null)
         {
@@ -216,6 +240,9 @@ namespace Box.V2.Managers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="sharedLinkRequest"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns></returns>
         public async Task<BoxFile> CreateSharedLinkAsync(string id, BoxSharedLinkRequest sharedLinkRequest, List<string> fields = null)
         {
@@ -237,6 +264,9 @@ namespace Box.V2.Managers
         /// Retrieves the comments on a particular file, if any exist.
         /// </summary>
         /// <param name="id">The Id of the item the comments should be retrieved for</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns>A Collection of comment objects are returned. If there are no comments on the file, an empty comments array is returned</returns>
         public async Task<BoxCollection<BoxComment>> GetCommentsAsync(string id, List<string> fields = null)
         {
@@ -261,6 +291,9 @@ namespace Box.V2.Managers
         /// <param name="maxHeight"></param>
         /// <param name="maxWidth"></param>
         /// <param name="throttle">Whether the requests will be throttled. Recommended to be left true to prevent spamming the server</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                         
         /// <returns></returns>
         public async Task<Stream> GetThumbnailAsync(string id, int? minHeight = null, int? minWidth = null, int? maxHeight = null, int? maxWidth = null, bool throttle = true)
         {
@@ -282,6 +315,9 @@ namespace Box.V2.Managers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="page"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns>A PNG of the preview</returns>
         public async Task<Stream> GetPreviewAsync(string id, int page)
         {
@@ -293,6 +329,9 @@ namespace Box.V2.Managers
         /// </summary>
         /// <param name="id">id of the file to return</param>
         /// <param name="page">page number of the file</param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                 
         /// <returns>BoxFilePreview that contains the stream, current page number and total number of pages in the file.</returns>
         public async Task<BoxFilePreview> GetFilePreviewAsync(string id, int page, int? maxWidth = null, int? minWidth = null, int? maxHeight = null, int? minHeight = null)
         {  
@@ -329,6 +368,9 @@ namespace Box.V2.Managers
         /// Retrieves an item that has been moved to the trash.
         /// </summary>
         /// <param name="id"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns>The full item will be returned, including information about when the it was moved to the trash.</returns>
         public async Task<BoxFile> GetTrashedAsync(string id, List<string> fields = null)
         {
@@ -347,6 +389,9 @@ namespace Box.V2.Managers
         /// it was moved to the trash. If that parent folder no longer exists or if there is now an item with the same name in that 
         /// parent folder, the new parent folder and/or new name will need to be included in the request.
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns>The full item will be returned with a 201 Created status. By default it is restored to the parent folder it was in before it was trashed.</returns>
         public async Task<BoxFile> RestoreTrashedAsync(BoxFileRequest fileRequest, List<string> fields = null)
         {
@@ -368,6 +413,9 @@ namespace Box.V2.Managers
         /// Permanently deletes an item that is in the trash. The item will no longer exist in Box. This action cannot be undone.
         /// </summary>
         /// <param name="id"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                        
         /// <returns>An empty 204 No Content response will be returned upon successful deletion</returns>
         public async Task<bool> PurgeTrashedAsync(string id)
         {

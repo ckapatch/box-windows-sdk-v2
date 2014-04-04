@@ -64,11 +64,6 @@ namespace Box.V2.Managers
 
             switch (response.Status)
             {
-                // Refresh the access token if the status is "Unauthorized" (HTTP Status Code 401: Unauthorized)
-                // This will only be attempted once as refresh tokens are single use
-                case ResponseStatus.Unauthorized:
-                    response = await RetryExpiredTokenRequest<T>(request).ConfigureAwait(false);
-                    break;
                 // Continue to retry the request if the status is "Pending" (HTTP Status Code 202: Approved)
                 // this will occur if a preview/thumbnail is not ready yet
                 case ResponseStatus.Pending:

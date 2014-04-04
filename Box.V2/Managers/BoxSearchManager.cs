@@ -25,6 +25,9 @@ namespace Box.V2.Managers
         /// <param name="keyword"></param>
         /// <param name="limit"></param>
         /// <param name="offset"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                              
         /// <returns></returns>
         public async Task<BoxCollection<BoxItem>> SearchAsync(string keyword, int limit, int offset = 0, List<string> fields = null)
         {

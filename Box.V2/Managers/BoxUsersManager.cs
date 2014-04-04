@@ -20,6 +20,9 @@ namespace Box.V2.Managers
         /// <summary>
         /// Retrieves information about the user who is currently logged in i.e. the user for whom this auth token was generated.
         /// </summary>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                              
         /// <returns></returns>
         public async Task<BoxUser> GetCurrentUserInformationAsync(List<string> fields = null)
         {
@@ -37,6 +40,9 @@ namespace Box.V2.Managers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="userRequest"></param>
+        /// <exception cref="Exceptions.BoxRateLimitingException">Thrown If the account is currently rate limited</exception>
+        /// <exception cref="Exceptions.AccessTokenExpiredException">Thrown If the account's Access Token has expired</exception>
+        /// <exception cref="Exceptions.BoxException">Thrown If any other unknown error is returned</exception>                       
         /// <returns></returns>
         public async Task<BoxUser> UpdateUserInformationAsync(BoxUserRequest userRequest, List<string> fields = null)
         {
