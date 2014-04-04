@@ -2,8 +2,11 @@
 using Box.V2.Config;
 using Box.V2.Converter;
 using Box.V2.Managers;
+using Box.V2.Plugins;
 using Box.V2.Request;
 using Box.V2.Services;
+using System;
+using System.Collections.Generic;
 
 namespace Box.V2
 {
@@ -13,9 +16,9 @@ namespace Box.V2
     /// </summary>
     public class BoxClient
     {
-        private IBoxConfig _config;
-        private IBoxService _service;
-        IBoxConverter _converter;
+        protected readonly IBoxService _service;
+        protected readonly IBoxConverter _converter;
+        protected readonly IRequestHandler _handler;
 
         /// <summary>
         /// Instantiates a BoxClient with the provided config object
@@ -30,28 +33,48 @@ namespace Box.V2
         /// <param name="authSession">A fully authenticated auth session</param>
         public BoxClient(IBoxConfig boxConfig, OAuthSession authSession)
         {
-            _config = boxConfig;
+            Config = boxConfig;
             
-            IRequestHandler handler = new HttpRequestHandler();
+            _handler = new HttpRequestHandler();
             _converter = new BoxJsonConverter();
-
-            _service = new BoxService(handler);
-
-            Auth = new AuthRepository(_config, _service, _converter, authSession);
+            _service = new BoxService(_handler);
+            Auth = new AuthRepository(Config, _service, _converter, authSession);
 
             InitManagers();
         }
 
         private void InitManagers()
         {
-            FoldersManager = new BoxFoldersManager(_config, _service, _converter, Auth);
-            FilesManager = new BoxFilesManager(_config, _service, _converter, Auth);
-            CommentsManager = new BoxCommentsManager(_config, _service, _converter, Auth);
-            CollaborationsManager = new BoxCollaborationsManager(_config, _service, _converter, Auth);
-            SearchManager = new BoxSearchManager(_config, _service, _converter, Auth);
-            UsersManager = new BoxUsersManager(_config, _service, _converter, Auth);
+            // Init Resource Managers
+            FoldersManager = new BoxFoldersManager(Config, _service, _converter, Auth);
+            FilesManager = new BoxFilesManager(Config, _service, _converter, Auth);
+            CommentsManager = new BoxCommentsManager(Config, _service, _converter, Auth);
+            CollaborationsManager = new BoxCollaborationsManager(Config, _service, _converter, Auth);
+            SearchManager = new BoxSearchManager(Config, _service, _converter, Auth);
+            UsersManager = new BoxUsersManager(Config, _service, _converter, Auth);
+            GroupsManager = new BoxGroupsManager(Config, _service, _converter, Auth);
+
+            // Init Resource Plugins Manager
+            ResourcePlugins = new BoxResourcePlugins();
         }
-        
+
+        /// <summary>
+        /// Adds additional resource managers/endpoints to the BoxClient.
+        /// This is meant to allow for the inclusion of beta APIs or unofficial endpoints
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public BoxClient AddResourcePlugin<T>() where T : BoxResourceManager
+        {
+            ResourcePlugins.Register<T>(() => (T)Activator.CreateInstance(typeof(T), Config, _service, _converter, Auth));
+            return this;
+        }
+
+        /// <summary>
+        /// The configuration parameters used by the Box Service
+        /// </summary>
+        public IBoxConfig Config { get; private set; }
+
         /// <summary>
         /// The manager that represents the files endpoint
         /// </summary>
@@ -83,8 +106,19 @@ namespace Box.V2
         public BoxUsersManager UsersManager { get; private set; }
 
         /// <summary>
+        /// The manager that represents the groups endpoint
+        /// </summary>
+        public BoxGroupsManager GroupsManager { get; private set; }
+
+        /// <summary>
         /// The Auth repository that holds the auth session
         /// </summary>
         public AuthRepository Auth { get; set; }
+
+        /// <summary>
+        /// Allows resource managers to be registered and retrieved as plugins
+        /// </summary>
+        public BoxResourcePlugins ResourcePlugins { get; private set; }
+
     }
 }

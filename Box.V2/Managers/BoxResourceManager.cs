@@ -1,6 +1,7 @@
 ﻿using Box.V2.Auth;
 using Box.V2.Config;
 using Box.V2.Converter;
+using Box.V2.Extensions;
 using Box.V2.Services;
 using System.Globalization;
 using System.Text;
@@ -14,7 +15,6 @@ namespace Box.V2.Managers
     public abstract class BoxResourceManager
     {
         protected const string ParamFields = "fields";
-        protected const string ParamVersion = "version";
 
         protected IBoxConfig _config;
         protected IBoxService _service;
@@ -48,6 +48,7 @@ namespace Box.V2.Managers
         protected async Task<IBoxResponse<T>> ToResponseAsync<T>(IBoxRequest request, bool queueRequest = false)
             where T : class
         {
+            AddDefaultHeaders(request);
             AddAuthorization(request);
             var response = await ExecuteRequest<T>(request, queueRequest).ConfigureAwait(false);
 
@@ -88,6 +89,7 @@ namespace Box.V2.Managers
             where T : class
         {
             OAuthSession newSession = await _auth.RefreshAccessTokenAsync(request.Authorization).ConfigureAwait(false);
+            AddDefaultHeaders(request);
             AddAuthorization(request, newSession.AccessToken);
             return await _service.ToResponseAsync<T>(request).ConfigureAwait(false);
         }
@@ -97,8 +99,8 @@ namespace Box.V2.Managers
             var auth = accessToken ?? _auth.Session.AccessToken;
 
             string authString = _auth.Session.AuthVersion == AuthVersion.V1 ? 
-                string.Format(CultureInfo.InvariantCulture, V1AuthString, _config.ClientId, auth) : 
-                string.Format(CultureInfo.InvariantCulture, V2AuthString, auth);
+                string.Format(CultureInfo.InvariantCulture, Constants.V1AuthString, _config.ClientId, auth) : 
+                string.Format(CultureInfo.InvariantCulture, Constants.V2AuthString, auth);
 
             StringBuilder sb = new StringBuilder(authString);
             
@@ -110,12 +112,9 @@ namespace Box.V2.Managers
                 string.Empty : 
                 string.Format("&device_name={0}", _config.DeviceName));
 
-            request.Header("Authorization", sb.ToString());
+            request.Header(Constants.AuthHeaderKey, sb.ToString());
         }
 
-        private string V1AuthString { get { return "BoxAuth api_key={0}&auth_token={1}"; } }
-
-        private string V2AuthString { get { return "Bearer {0}"; } }
 
     }
 }

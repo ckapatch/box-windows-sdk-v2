@@ -1,5 +1,5 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Net;
+using System.Net.Http.Headers;
 namespace Box.V2
 {
     /// <summary>
@@ -26,18 +26,18 @@ namespace Box.V2
         /// <summary>
         /// Status code of the HTTP response
         /// </summary>
-        public int StatusCode { get; set; }
-
-        /// <summary>
-        /// Headers From Response
-        /// </summary>
-        public List<KeyValuePair<string, IEnumerable<string>>> Headers { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
 
         /// <summary>
         /// The error associated with an Error status
         /// This will be null in all other cases
         /// </summary>
         public BoxError Error { get; set; }
+
+        /// <summary>
+        /// Headers returned as part of the response
+        /// </summary>
+        public HttpResponseHeaders Headers { get; set; }
     }
 
     /// <summary>

@@ -7,7 +7,8 @@ Windows SDK for v2 of the Box API. The SDK is built upon the Portable Class Libr
 ###Prerequisites
 * Git  
 * Visual Studio 2012 w/ Update 2 CTP  
-* Windows Phone SDK 8.0
+* Windows Phone SDK 8.0 (if running Windows Phone samples)
+* Windows Store SDK (if running Windows Store samples)
 
 Quick Start
 -----------
@@ -125,3 +126,20 @@ Documentation of all classes and methods are provided through the standard ```<s
 Known Issues
 ------------
 Windows 8 Sample OAuth2 uses desktop login screen instead of mobile. Pending fix from platform team.
+
+
+## Copyright and License
+
+Copyright 2014 Box, Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

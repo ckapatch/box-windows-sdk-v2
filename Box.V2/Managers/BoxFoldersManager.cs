@@ -1,6 +1,7 @@
 ﻿using Box.V2.Auth;
 using Box.V2.Config;
 using Box.V2.Converter;
+using Box.V2.Extensions;
 using Box.V2.Models;
 using Box.V2.Services;
 using System;
@@ -11,7 +12,6 @@ namespace Box.V2.Managers
 {
     public class BoxFoldersManager : BoxResourceManager
     {
-
         public BoxFoldersManager(IBoxConfig config, IBoxService service, IBoxConverter converter, IAuthRepository auth)
             : base(config, service, converter, auth) { }
 
@@ -55,7 +55,6 @@ namespace Box.V2.Managers
 
             return response.ResponseObject;
         }
-
 
         /// <summary>
         /// Used to create a new empty folder. The new folder will be created inside of the specified parent folder
@@ -134,7 +133,7 @@ namespace Box.V2.Managers
 
             BoxRequest request = new BoxRequest(_config.FoldersEndpointUri, id)
                 .Method(RequestMethod.Delete)
-                .Param("recursive", recursive.ToString());
+                .Param("recursive", recursive.ToString().ToLowerInvariant());
 
             IBoxResponse<BoxFolder> response = await ToResponseAsync<BoxFolder>(request).ConfigureAwait(false);
 

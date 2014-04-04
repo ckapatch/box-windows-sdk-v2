@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Box.V2.Request
@@ -50,18 +50,11 @@ namespace Box.V2.Request
             {
                 HttpResponseMessage response = await _client.SendAsync(httpRequest, completionOption).ConfigureAwait(false);
 
-                BoxResponse<T> boxResponse = new BoxResponse<T>()
-                {
-                    Headers = new List<KeyValuePair<string, IEnumerable<string>>>()
-                };
+                BoxResponse<T> boxResponse = new BoxResponse<T>();
+                boxResponse.Headers = response.Headers;
 
-                foreach (var header in response.Headers)
-                {                    
-                    boxResponse.Headers.Add(new KeyValuePair<string, IEnumerable<string>>(header.Key, header.Value));
-                }                
-
-                // Translate the status codes that interest us     
-                boxResponse.StatusCode = (int)response.StatusCode;
+                // Translate the status codes that interest us 
+                boxResponse.StatusCode = response.StatusCode;
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.OK:
@@ -76,7 +69,7 @@ namespace Box.V2.Request
                         boxResponse.Status = ResponseStatus.Unauthorized;
                         break;                   
                     default:
-                        if (boxResponse.StatusCode == 429)
+                        if ((int)boxResponse.StatusCode == 429)
                         {
                             boxResponse.Status = ResponseStatus.RateLimitReached;
                         }
@@ -91,11 +84,12 @@ namespace Box.V2.Request
                 if (isStream && boxResponse.Status == ResponseStatus.Success)
                 {
                     var resObj = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                    boxResponse.ResponseObject = resObj as T;
+                    boxResponse.ResponseObject = resObj as T;             
                 }
                 else
+                {
                     boxResponse.ContentString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
+                }
                 return boxResponse;
             }
             catch (Exception ex)
@@ -132,8 +126,11 @@ namespace Box.V2.Request
                     throw new InvalidOperationException("Http method not supported");
             }
 
-            httpRequest.Content = !string.IsNullOrWhiteSpace(request.Payload) ?
-                (HttpContent)new StringContent(request.Payload) :
+            // Set request content to string or form-data
+            httpRequest.Content = !string.IsNullOrWhiteSpace(request.Payload) ? 
+                string.IsNullOrEmpty(request.ContentType) ? // Check for custom content type
+                    (HttpContent)new StringContent(request.Payload) :
+                    (HttpContent)new StringContent(request.Payload, request.ContentEncoding, request.ContentType) :
                 (HttpContent)new FormUrlEncodedContent(request.PayloadParameters);
 
             return httpRequest;

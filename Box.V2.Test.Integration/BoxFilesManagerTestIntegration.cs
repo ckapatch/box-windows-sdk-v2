@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 using Box.V2.Models;
+using System.Net;
 
 namespace Box.V2.Test.Integration
 {
@@ -14,10 +15,22 @@ namespace Box.V2.Test.Integration
 
         private const string savePath = @"C:\Users\btang\Downloads\{0}";
 
+        private const string MobileBoxerFileId = "8250445374";
+
         [TestMethod]
         public async Task GetInformation_Fields_ValidResponse()
         {
             var test = await _client.FilesManager.GetInformationAsync(FileId, new List<string> { BoxFile.FieldName, BoxFile.FieldModifiedAt, BoxFile.FieldOwnedBy });
+        }
+
+        [TestMethod]
+        public async Task GetStreamResponse()
+        {
+            var filePreview = await _client.FilesManager.GetFilePreviewAsync(MobileBoxerFileId, 1);
+
+            Assert.AreEqual(1, filePreview.CurrentPage);
+            Assert.AreEqual(4, filePreview.TotalPages);
+            Assert.AreEqual(HttpStatusCode.OK, filePreview.ReturnedStatusCode);
         }
 
 
@@ -38,7 +51,7 @@ namespace Box.V2.Test.Integration
 
             /*** Act ***/
             for (int i = 0; i < numTasks; ++i)
-                 tasks.Add(_client.FilesManager.DownloadStreamAsync(FileId));
+                tasks.Add(_client.FilesManager.DownloadStreamAsync(FileId));
 
             await Task.WhenAll(tasks);
 
@@ -67,6 +80,18 @@ namespace Box.V2.Test.Integration
         }
 
         [TestMethod]
+        public async Task GetSharedLink_ValidRequest_ValidSharedLink()
+        {
+            BoxSharedLinkRequest linkReq = new BoxSharedLinkRequest()
+            {
+                Access = BoxSharedLinkAccessType.open
+            };
+            
+            BoxFile fileLink = await _client.FilesManager.CreateSharedLinkAsync("11999421592", linkReq);
+            Assert.AreEqual(BoxSharedLinkAccessType.open, fileLink.SharedLink.Access);
+        }
+
+        [TestMethod]
         public async Task FileWorkflow_ValidRequest_ValidResponse()
         {
             string fileName = "reimages.zip";
@@ -80,7 +105,8 @@ namespace Box.V2.Test.Integration
             BoxFile file;
             using (FileStream fs = new FileStream(filePath, FileMode.Open))
             {
-                BoxFileRequest req = new BoxFileRequest(){
+                BoxFileRequest req = new BoxFileRequest()
+                {
                     Name = "reimages.zip",
                     Parent = new BoxRequestEntity() { Id = "0" }
                 };
@@ -122,17 +148,17 @@ namespace Box.V2.Test.Integration
             BoxFile fileUpdate = await _client.FilesManager.UpdateInformationAsync(updateReq);
 
             Assert.AreEqual(file.Id, fileUpdate.Id);
-            Assert.AreEqual(updateName, fileUpdate.Name );
+            Assert.AreEqual(updateName, fileUpdate.Name);
             Assert.AreEqual(updateName, fileUpdate.Description);
 
             // Test create shared link
-            //BoxSharedLinkRequest linkReq = new BoxSharedLinkRequest()
-            //{
-            //    Access = BoxSharedLinkAccessType.open
-            //};
-            //BoxFile fileLink = await _client.FilesManager.CreateSharedLinkAsync(newFile.Id, linkReq);
+            BoxSharedLinkRequest linkReq = new BoxSharedLinkRequest()
+            {
+                Access = BoxSharedLinkAccessType.open
+            };
+            BoxFile fileLink = await _client.FilesManager.CreateSharedLinkAsync(newFile.Id, linkReq);
 
-            //Assert.AreEqual(BoxSharedLinkAccessType.open, fileLink.SharedLink.Access);
+            Assert.AreEqual(BoxSharedLinkAccessType.open, fileLink.SharedLink.Access);
 
             // Test copy a file
             string copyName = GetUniqueName();

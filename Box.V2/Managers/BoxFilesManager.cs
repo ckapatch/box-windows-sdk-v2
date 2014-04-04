@@ -1,13 +1,17 @@
 ﻿using Box.V2.Auth;
 using Box.V2.Config;
 using Box.V2.Converter;
+using Box.V2.Extensions;
 using Box.V2.Models;
 using Box.V2.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Box.V2.Managers
@@ -51,7 +55,7 @@ namespace Box.V2.Managers
             id.ThrowIfNullOrWhiteSpace("id");
 
             BoxRequest request = new BoxRequest(_config.FilesEndpointUri, string.Format(Constants.ContentPathString, id))
-                .Param(ParamVersion, versionId);
+                .Param("version", versionId);
 
             IBoxResponse<Stream> response = await ToResponseAsync<Stream>(request).ConfigureAwait(false);
 
@@ -105,7 +109,6 @@ namespace Box.V2.Managers
         public async Task<BoxFile> UploadNewVersionAsync(string fileName, string fileId, Stream stream, string etag = null, List<string> fields = null)
         {
             stream.ThrowIfNull("stream");
-            //etag.ThrowIfNullOrWhiteSpace("etag");
             fileName.ThrowIfNullOrWhiteSpace("fileName");
 
             BoxMultiPartRequest request = new BoxMultiPartRequest(new Uri(string.Format(Constants.FilesNewVersionEndpointString, fileId)))
@@ -173,12 +176,11 @@ namespace Box.V2.Managers
         /// <param name="id"></param>
         /// <param name="etag"></param>
         /// <returns></returns>
-        public async Task<bool> DeleteAsync(string id, string etag)
+        public async Task<bool> DeleteAsync(string id, string etag=null)
         {
             id.ThrowIfNullOrWhiteSpace("id");
-            //etag.ThrowIfNullOrWhiteSpace("etag");
 
-            BoxRequest request = new BoxRequest(_config.FilesUploadEndpointUri, id)
+            BoxRequest request = new BoxRequest(_config.FilesEndpointUri, id)
                 .Method(RequestMethod.Delete)
                 .Header("If-Match", etag);
 
@@ -222,7 +224,7 @@ namespace Box.V2.Managers
                 throw new ArgumentNullException("sharedLink.Access");
 
             BoxRequest request = new BoxRequest(_config.FilesEndpointUri, id)
-                .Method(RequestMethod.Post)
+                .Method(RequestMethod.Put)
                 .Param(ParamFields, fields)
                 .Payload(_converter.Serialize(new BoxItemRequest() { SharedLink = sharedLinkRequest }));
 
@@ -283,15 +285,44 @@ namespace Box.V2.Managers
         /// <returns>A PNG of the preview</returns>
         public async Task<Stream> GetPreviewAsync(string id, int page)
         {
+            return (await GetPreviewResponseAsync(id, page)).ResponseObject;
+        }
+
+        /// <summary>
+        /// Get the preview and return a BoxFilePreview response. 
+        /// </summary>
+        /// <param name="id">id of the file to return</param>
+        /// <param name="page">page number of the file</param>
+        /// <returns>BoxFilePreview that contains the stream, current page number and total number of pages in the file.</returns>
+        public async Task<BoxFilePreview> GetFilePreviewAsync(string id, int page, int? maxWidth = null, int? minWidth = null, int? maxHeight = null, int? minHeight = null)
+        {  
+            IBoxResponse<Stream> response = await GetPreviewResponseAsync(id, page, maxWidth, minWidth, maxHeight, minHeight);
+
+            BoxFilePreview filePreview = new BoxFilePreview();
+            filePreview.CurrentPage = page;
+            filePreview.ReturnedStatusCode = response.StatusCode;
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                filePreview.PreviewStream = response.ResponseObject ;
+                filePreview.TotalPages = response.BuildPagesCount();
+            }
+
+            return filePreview;
+        }
+
+        private async Task<IBoxResponse<Stream>> GetPreviewResponseAsync(string id, int page, int? maxWidth = null, int? minWidth = null, int? maxHeight = null, int? minHeight = null)
+        {
             id.ThrowIfNullOrWhiteSpace("id");
 
-            BoxRequest request = new BoxRequest(new Uri(string.Format("https://www.box.net/api/2.0/files/{0}/preview.png", id)))
-                .Param("page", page.ToString());
+            BoxRequest request = new BoxRequest(_config.FilesEndpointUri, string.Format(Constants.PreviewPathString, id))
+                .Param("page", page.ToString())
+                .Param("max_width", maxWidth.ToString())
+				.Param("max_height", maxHeight.ToString())
+				.Param("min_width", minWidth.ToString())
+				.Param("min_height", minHeight.ToString());
 
-            IBoxResponse<Stream> response = await ToResponseAsync<Stream>(request).ConfigureAwait(false);
-
-            return response.ResponseObject;
-
+            return await ToResponseAsync<Stream>(request).ConfigureAwait(false);
         }
 
         /// <summary>

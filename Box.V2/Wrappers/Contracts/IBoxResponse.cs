@@ -1,7 +1,8 @@
-﻿namespace Box.V2
-{
-    using System.Collections.Generic;
+﻿using System.Net;
+using System.Net.Http.Headers;
 
+namespace Box.V2
+{
     /// <summary>
     /// Interface for all Box responses
     /// </summary>
@@ -24,14 +25,19 @@
         ResponseStatus Status { get; set; }
 
         /// <summary>
-        /// Headers From Response
+        /// Status code of the HTTP response
         /// </summary>
-        List<KeyValuePair<string, IEnumerable<string>>> Headers { get; set; }
+        HttpStatusCode StatusCode { get; set; }
 
         /// <summary>
         /// The error associated with an Error status
         /// This will be null in all other cases
         /// </summary>
         BoxError Error { get; set; }
+
+        /// <summary>
+        /// Headers returned as part of the response
+        /// </summary>
+        HttpResponseHeaders Headers { get; set; }
     }
 }
